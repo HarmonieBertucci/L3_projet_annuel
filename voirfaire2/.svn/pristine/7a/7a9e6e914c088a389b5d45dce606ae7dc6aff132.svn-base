@@ -1,0 +1,406 @@
+"use strict";
+
+function getUserCity(latitude, longitude){ // a passer en PHP selon la méthode curl du Prof
+  let geocodeInput = encodeURIComponent(latitude + ',' + longitude)
+  let api_url_geocode = 'https://api.opencagedata.com/geocode/v1/json?key=45d26994dcc44112a048289356be3a5b&pretty=1&q=' + geocodeInput;
+  let request_geocode = new XMLHttpRequest();
+  request_geocode.open('GET', api_url_geocode);
+  request_geocode.onload = function() {
+    if (request_geocode.status === 200){
+      let data = JSON.parse(request_geocode.responseText);
+      let lat = data.results[0]['geometry']['lat'];
+      let lng = data.results[0]['geometry']['lng'];
+      let type = data.results[0]['components']['_type'];
+      let municipality = data.results[0]['components']['municipality'];
+      let city = data.results[0]['components']['city'];
+      let town = data.results[0]['components']['town'];
+      let village = data.results[0]['components']['village'];
+      let commune;
+      if(type === 'city'){
+        if(city === municipality){
+          commune = city;
+        }
+        if(city !== municipality){
+          commune = town;
+        }
+      }
+      else if(type === 'village'){
+        commune = village;
+      }
+      else if(type === 'road' || type === 'building'){
+        commune = city;
+      }
+      else if(type === 'state' || type === 'country'){
+        console.log('Erreur');
+      }
+      console.log(type + ', ' + commune + ', ' + lat + ', ' + lng);
+      initMap(lat, lng, commune);
+    }
+    else if (request_geocode.status <= 500){
+      console.log("unable to geocode! Response code: " + request_geocode.status);
+      var data = JSON.parse(request_geocode.responseText);
+      console.log('error msg: ' + data.status.message);
+    }
+    else {
+      console.log("server error");
+    }
+  };
+  request_geocode.send();
+} // End getUserCity()
+
+function initMap(lat, lng, commune,coor){
+  let directionsService = new google.maps.DirectionsService();
+  let directionsDisplay = new google.maps.DirectionsRenderer();
+  let locationCoordinates = new google.maps.LatLng(lat, lng);
+  let map = new google.maps.Map(document.getElementById("map"), {
+    zoom: 13,
+    center: locationCoordinates,
+    disableDefaultUI: false, // for map interface
+    styles :
+    [
+        {
+            "featureType": "water",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "hue": "#165c64"
+                },
+                {
+                    "saturation": 34
+                },
+                {
+                    "lightness": -69
+                },
+                {
+                    "visibility": "on"
+                }
+            ]
+        },
+        {
+            "featureType": "landscape",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "hue": "#b7caaa"
+                },
+                {
+                    "saturation": -14
+                },
+                {
+                    "lightness": -18
+                },
+                {
+                    "visibility": "on"
+                }
+            ]
+        },
+        {
+            "featureType": "landscape.man_made",
+            "elementType": "all",
+            "stylers": [
+                {
+                    "hue": "#cbdac1"
+                },
+                {
+                    "saturation": -6
+                },
+                {
+                    "lightness": -9
+                },
+                {
+                    "visibility": "on"
+                }
+            ]
+        },
+        {
+            "featureType": "road",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "hue": "#8d9b83"
+                },
+                {
+                    "saturation": -89
+                },
+                {
+                    "lightness": -12
+                },
+                {
+                    "visibility": "on"
+                }
+            ]
+        },
+        {
+            "featureType": "road.highway",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "hue": "#d4dad0"
+                },
+                {
+                    "saturation": -88
+                },
+                {
+                    "lightness": 54
+                },
+                {
+                    "visibility": "simplified"
+                }
+            ]
+        },
+        {
+            "featureType": "road.arterial",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "hue": "#bdc5b6"
+                },
+                {
+                    "saturation": -89
+                },
+                {
+                    "lightness": -3
+                },
+                {
+                    "visibility": "simplified"
+                }
+            ]
+        },
+        {
+            "featureType": "road.local",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "hue": "#bdc5b6"
+                },
+                {
+                    "saturation": -89
+                },
+                {
+                    "lightness": -26
+                },
+                {
+                    "visibility": "on"
+                }
+            ]
+        },
+        {
+            "featureType": "poi",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "hue": "#c17118"
+                },
+                {
+                    "saturation": 61
+                },
+                {
+                    "lightness": -45
+                },
+                {
+                    "visibility": "on"
+                }
+            ]
+        },
+        {
+            "featureType": "poi.park",
+            "elementType": "all",
+            "stylers": [
+                {
+                    "hue": "#8ba975"
+                },
+                {
+                    "saturation": -46
+                },
+                {
+                    "lightness": -28
+                },
+                {
+                    "visibility": "on"
+                }
+            ]
+        },
+        {
+            "featureType": "transit",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "hue": "#a43218"
+                },
+                {
+                    "saturation": 74
+                },
+                {
+                    "lightness": -51
+                },
+                {
+                    "visibility": "simplified"
+                }
+            ]
+        },
+        {
+            "featureType": "administrative.province",
+            "elementType": "all",
+            "stylers": [
+                {
+                    "hue": "#ffffff"
+                },
+                {
+                    "saturation": 0
+                },
+                {
+                    "lightness": 100
+                },
+                {
+                    "visibility": "simplified"
+                }
+            ]
+        },
+        {
+            "featureType": "administrative.neighborhood",
+            "elementType": "all",
+            "stylers": [
+                {
+                    "hue": "#ffffff"
+                },
+                {
+                    "saturation": 0
+                },
+                {
+                    "lightness": 100
+                },
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "administrative.locality",
+            "elementType": "labels",
+            "stylers": [
+                {
+                    "hue": "#ffffff"
+                },
+                {
+                    "saturation": 0
+                },
+                {
+                    "lightness": 100
+                },
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "administrative.land_parcel",
+            "elementType": "all",
+            "stylers": [
+                {
+                    "hue": "#ffffff"
+                },
+                {
+                    "saturation": 0
+                },
+                {
+                    "lightness": 100
+                },
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "administrative",
+            "elementType": "all",
+            "stylers": [
+                {
+                    "hue": "#3a3935"
+                },
+                {
+                    "saturation": 5
+                },
+                {
+                    "lightness": -57
+                },
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "poi.medical",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "hue": "#cba923"
+                },
+                {
+                    "saturation": 50
+                },
+                {
+                    "lightness": -46
+                },
+                {
+                    "visibility": "on"
+                }
+            ]
+        }
+    ]
+  });
+  directionsDisplay.setMap(map);
+
+  let marker = new google.maps.Marker({
+    position: locationCoordinates,
+    map: map,
+    flat: true,
+    title: commune,
+    url: '.',
+    icon: {url: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png"}
+  });
+
+  google.maps.event.addListener(marker, "click", function() { // click on main marker opens new tab
+    window.open(this.url, '_blank');
+  });
+
+if(typeof(coor) !== 'undefined' ){
+  console.log( coor);
+  for (let i = 0; i < coor.length; i++) {// placement des marqueurs des fiches
+    console.log("test de :" + i);
+    let fiche = coor[i];
+    let arrayType = fiche[2];
+    let arrayTitle = fiche[3];
+    let arrayLat = fiche[0];
+    let arrayLng = fiche[1];
+    let arrayId = fiche[4];
+    let arrayCoordinates = new google.maps.LatLng(arrayLat, arrayLng);
+      if(arrayType === "Lieu"){
+        console.log(arrayType + " : " + arrayTitle);
+        let marker = new google.maps.Marker({
+          position: arrayCoordinates,
+          map: map,
+          flat: true,
+          title: arrayTitle,
+          url: ".?id=" + arrayId,
+          icon: {url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"}
+        });
+        google.maps.event.addListener(marker, "click", function() { // click on main marker opens new tab
+        document.location.href=this.url;
+        });
+      }
+      else if(arrayType === "Activité"){
+        console.log(arrayType + " : " + arrayTitle);
+        let marker = new google.maps.Marker({
+          position: arrayCoordinates,
+          map: map,
+          flat: true,
+          title: arrayTitle,
+          icon: {url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"}
+        });
+      }
+  }
+}
+else{
+console.log("La liste d'annonces à présenter sur la map est vide = problème");
+}
+} // End initMap()

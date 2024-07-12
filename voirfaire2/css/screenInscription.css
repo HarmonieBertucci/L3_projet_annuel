@@ -1,0 +1,105 @@
+*
+{
+    box-sizing: border-box;
+    font-family: 'Quicksand';
+}
+
+body
+{
+    align-items: center;
+    justify-content: center;
+    color:#555;
+    background-image: url("../images/login_Plan de travail 1 copie_Plan de travail 1 copie.png");
+    background-repeat: no-repeat;
+    background-size: 100%;
+
+}
+#fields
+{
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 2.5%;
+}
+
+
+.inscription_page{
+
+    width: 350px;
+    height: 520px;
+    position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin-left: 17%;
+    margin-top: 12%;
+    padding: 1vh 35px 50px 35px;
+    border-radius: 25px;
+    box-shadow: 13px 13px 20px #cbced1,-13px -13px 20px #ffffff;
+}
+#Titre
+{
+    text-align: center;
+    font-size: 30px;
+    margin-top: 7%;
+    color : #172F4E;
+    margin-bottom: 0;
+
+}
+
+#toConnexion
+{
+    text-align: center;
+    font-size: 15px;
+    color: #303030;
+    margin-top:5%;
+}
+
+#toConnexion a {
+    text-decoration: none;
+    color: darkgrey;
+}
+
+#fields input
+{
+    font-family: 'Quicksand';
+    border: none;
+    outline:none;
+    background: none;
+    font-size: 17.5px;
+    padding: 16px 0px 16px 10px;
+}
+
+#nom, #pseudo,#prenom,#password {
+    margin-bottom: 20px;
+    border-radius: 25px;
+    box-shadow: inset 7px 7px 12px #cbced1, inset -7px -7px 12px #ffffff;
+}
+#signup-button
+{
+    outline: none;
+    text-decoration: none;
+    border:none;
+    cursor: pointer;
+    width:60%;
+    height: 60px;
+    margin: 4% 0 4% 20%;
+    border-radius: 15px;
+    font-size: 25px;
+    font-family: 'Quicksand';
+    transition: background-color 0.2s ease-in-out;
+    color : #ecf0f3;
+    background-color: #172F4E;
+    text-align: center;
+    box-shadow: #93C1E9 0 23px 35px -12px;
+
+}
+
+#signup-button:hover{
+    background-color: #FFD5C2;
+    color: #172F4E;
+}
+p{
+    margin: 0;
+}

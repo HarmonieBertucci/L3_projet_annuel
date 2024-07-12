@@ -1,0 +1,70 @@
+*{
+  font-family: 'Quicksand';
+
+}
+#menu a{
+    text-decoration: none;
+    margin-right: 70px;
+    color:#172F4E;
+}
+
+#menu {
+
+    list-style-type: none;
+    margin-left: 6%;
+    margin-bottom: 0;
+
+}
+
+#inscription li, #connexion li, #deconnection li{
+    margin-top: 0;
+    font-size: 15px;
+}
+
+ li {
+    padding: 10px 0;
+    font-size: 18px;
+    display: inline-block;
+    margin-top: 2%;
+}
+
+
+#button{
+    margin :0;
+}
+
+#connexion a, #inscription a, #deconnection a{
+    text-decoration: none;
+    color: #172F4E;
+    margin: 0;
+}
+#connexion , #inscription, #deconnection {
+    outline: none;
+    text-decoration: none;
+    padding: 5px;
+    width:10%;
+    float: right;
+    margin-right: 3%;
+    border-radius: 8px;
+    font-size: 17.5px;
+    border:2px solid #172F4E;
+    transition: border 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    text-align: center;
+    display: inline-block;
+}
+#connexion:hover, #deconnection:hover{
+    border:2px solid #FFD5C2;
+
+}
+#inscription:hover{
+    background-color: #FFD5C2;
+    border: solid #FFD5C2;
+}
+
+#inscription{
+    background-color: #172F4E;
+
+}
+#inscription a{
+    color: white;
+}

@@ -1,0 +1,210 @@
+-- MySQL dump 10.19  Distrib 10.3.34-MariaDB, for debian-linux-gnu (x86_64)
+--
+-- Host: mysql.info.unicaen.fr    Database: 21715195_bd
+-- ------------------------------------------------------
+-- Server version	10.5.11-MariaDB-1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `Account`
+--
+
+DROP TABLE IF EXISTS `Account`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Account` (
+  `nom` varchar(255) DEFAULT NULL,
+  `prenom` varchar(255) DEFAULT NULL,
+  `pseudo` varchar(255) NOT NULL,
+  `mot_de_passe` varchar(255) DEFAULT NULL,
+  `statut` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`pseudo`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Account`
+--
+
+LOCK TABLES `Account` WRITE;
+/*!40000 ALTER TABLE `Account` DISABLE KEYS */;
+INSERT INTO `Account` VALUES ('admin','admin','admin','$2y$10$s0tHnYrh2ApezXvv0WISZub9cvuTl/.9Z/ffITN/qGe2w514BeSMe','admin'),('toto','toto','toto','$2y$10$ifZl72JAddoQQe.656MX8.1uRK91kAKLHY2O0rAKKwq7PeSWdamru','user');
+/*!40000 ALTER TABLE `Account` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Annonces`
+--
+
+DROP TABLE IF EXISTS `Annonces`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Annonces` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `titre` varchar(255) DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `categorie` varchar(255) DEFAULT NULL,
+  `rue` varchar(255) DEFAULT NULL,
+  `ville` varchar(255) DEFAULT NULL,
+  `codePostal` int(11) DEFAULT NULL,
+  `latitude` decimal(30,10) DEFAULT NULL,
+  `longitude` decimal(30,10) DEFAULT NULL,
+  `tarification` varchar(255) DEFAULT NULL,
+  `horaire` varchar(255) DEFAULT NULL,
+  `ageMinimum` varchar(255) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `pseudo_proprio` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Annonces`
+--
+
+LOCK TABLES `Annonces` WRITE;
+/*!40000 ALTER TABLE `Annonces` DISABLE KEYS */;
+INSERT INTO `Annonces` VALUES (1,'Crous','Lieu','ezffre','114 rue de lebisey','Caen',14000,49.1859000000,-0.3591000000,'','','','fezvb','admin'),(2,'Crous','Lieu','logement','114 rue de lebisey','Caen',14000,49.1859000000,-0.3591000000,'','','','grey(\'j','admin'),(3,'lebisey','Lieu','logement','114 rue de lebisey','Caen',14000,49.1994560000,-0.3520985000,'','','',' yj;-omopm','admin');
+/*!40000 ALTER TABLE `Annonces` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Attente`
+--
+
+DROP TABLE IF EXISTS `Attente`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Attente` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `titre` varchar(255) DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `categorie` varchar(255) DEFAULT NULL,
+  `rue` varchar(255) DEFAULT NULL,
+  `ville` varchar(255) DEFAULT NULL,
+  `codePostal` int(11) DEFAULT NULL,
+  `latitude` decimal(30,10) DEFAULT NULL,
+  `longitude` decimal(30,10) DEFAULT NULL,
+  `tarification` varchar(255) DEFAULT NULL,
+  `horaire` varchar(255) DEFAULT NULL,
+  `ageMinimum` varchar(255) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `pseudo_proprio` varchar(255) DEFAULT NULL,
+  `id_existant` int(11) DEFAULT NULL,
+  `action` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_existant` (`id_existant`),
+  CONSTRAINT `Attente_ibfk_1` FOREIGN KEY (`id_existant`) REFERENCES `Annonces` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Attente`
+--
+
+LOCK TABLES `Attente` WRITE;
+/*!40000 ALTER TABLE `Attente` DISABLE KEYS */;
+INSERT INTO `Attente` VALUES (1,'Crous','Lieu','logement','114 rue de lebisey','Caen',14000,49.1859000000,-0.3591000000,'','','',' ethhu','admin',NULL,'creation'),(2,'Crous','Lieu','logement','114 rue de lebisey','Caen',14000,49.1859000000,-0.3591000000,'','','',' ethhu','admin',NULL,'creation'),(3,'Crous','Lieu','logement','114 rue de lebisey','Caen',14000,NULL,NULL,'','','',' aefrg','admin',NULL,'creation'),(4,'Crous','Lieu','logement','114 rue de lebisey','Caen',14000,NULL,NULL,'','','',' aefrg','admin',NULL,'creation'),(5,'Crous','Lieu','logement','114 rue de lebisey','Caen',14000,NULL,NULL,'','','',' aefrg','admin',NULL,'creation'),(6,'Crous','Lieu','logement','114 rue de lebisey','Caen',14000,NULL,NULL,'','','',' aefrg','admin',NULL,'creation'),(7,'Crous','Lieu','logement','114 rue de lebisey','Caen',14000,NULL,NULL,'','','',' ohùg','admin',NULL,'creation'),(8,'Crous','Lieu','logement','114 rue de lebisey','Caen',14000,NULL,NULL,'','','',' h\'theg','admin',NULL,'creation'),(9,'Crous','Lieu','logement','114 rue de lebisey','Caen',14000,NULL,NULL,'','','',' gnfrtj','admin',NULL,'creation'),(10,'Crous','Lieu','logement','114 rue de lebisey','Caen',14000,NULL,NULL,'','','',' é\'gvrej','admin',NULL,'creation'),(11,'Crous','Lieu','logement','114 rue de lebisey','Caen',14000,49.1994560000,-0.3520985000,'','','',' k-èklkè','admin',NULL,'creation'),(12,'Crous','Lieu','logement','114 rue de lebisey','Caen',14000,49.1994560000,-0.3520985000,'','','',' thsbkj','admin',NULL,'creation'),(13,'Crous','Lieu','logement','114 rue de lebisey','Caen',14000,NULL,NULL,'','','',' tt,ny','admin',NULL,'creation'),(14,'Crous','Lieu','logement','114 rue de lebisey','Caen',14000,49.1994560000,-0.3520985000,'','','',' j-y\'(dkul-','admin',NULL,'creation');
+/*!40000 ALTER TABLE `Attente` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Commentaire`
+--
+
+DROP TABLE IF EXISTS `Commentaire`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Commentaire` (
+  `id` int(11) NOT NULL,
+  `comm` text DEFAULT NULL,
+  `idAnnonce` int(11) DEFAULT NULL,
+  `notation` int(5) DEFAULT NULL,
+  `user` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idAnnonce` (`idAnnonce`),
+  CONSTRAINT `Commentaire_ibfk_1` FOREIGN KEY (`idAnnonce`) REFERENCES `Annonces` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Commentaire`
+--
+
+LOCK TABLES `Commentaire` WRITE;
+/*!40000 ALTER TABLE `Commentaire` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Commentaire` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Image`
+--
+
+DROP TABLE IF EXISTS `Image`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Image` (
+  `id` int(11) NOT NULL,
+  `img` varchar(999) DEFAULT NULL,
+  `idAnnonce` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idAnnonce` (`idAnnonce`),
+  CONSTRAINT `Image_ibfk_1` FOREIGN KEY (`idAnnonce`) REFERENCES `Annonces` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Image`
+--
+
+LOCK TABLES `Image` WRITE;
+/*!40000 ALTER TABLE `Image` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Image` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ImageEnAttente`
+--
+
+DROP TABLE IF EXISTS `ImageEnAttente`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ImageEnAttente` (
+  `id` int(11) NOT NULL,
+  `img` varchar(999) DEFAULT NULL,
+  `idAnnonce` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idAnnonce` (`idAnnonce`),
+  CONSTRAINT `ImageEnAttente_ibfk_1` FOREIGN KEY (`idAnnonce`) REFERENCES `Attente` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ImageEnAttente`
+--
+
+LOCK TABLES `ImageEnAttente` WRITE;
+/*!40000 ALTER TABLE `ImageEnAttente` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ImageEnAttente` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2022-03-16 13:43:16

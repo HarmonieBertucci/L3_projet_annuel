@@ -1,0 +1,212 @@
+-- MySQL dump 10.19  Distrib 10.3.34-MariaDB, for debian-linux-gnu (x86_64)
+--
+-- ------------------------------------------------------
+-- Server version	10.5.11-MariaDB-1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `Account`
+--
+
+DROP TABLE IF EXISTS `Account`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Account` (
+  `nom` varchar(255) DEFAULT NULL,
+  `prenom` varchar(255) DEFAULT NULL,
+  `pseudo` varchar(255) NOT NULL,
+  `mot_de_passe` varchar(255) DEFAULT NULL,
+  `statut` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`pseudo`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Account`
+--
+
+LOCK TABLES `Account` WRITE;
+/*!40000 ALTER TABLE `Account` DISABLE KEYS */;
+INSERT INTO `Account` VALUES ('admin','admin','admin','$2y$10$s0tHnYrh2ApezXvv0WISZub9cvuTl/.9Z/ffITN/qGe2w514BeSMe','admin'),('toto','toto','toto','$2y$10$ifZl72JAddoQQe.656MX8.1uRK91kAKLHY2O0rAKKwq7PeSWdamru','user');
+/*!40000 ALTER TABLE `Account` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Annonces`
+--
+
+DROP TABLE IF EXISTS `Annonces`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Annonces` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `titre` varchar(255) DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `categorie` varchar(255) DEFAULT NULL,
+  `rue` varchar(255) DEFAULT NULL,
+  `ville` varchar(255) DEFAULT NULL,
+  `codePostal` int(11) DEFAULT NULL,
+  `latitude` decimal(30,10) DEFAULT NULL,
+  `longitude` decimal(30,10) DEFAULT NULL,
+  `tarification` varchar(255) DEFAULT NULL,
+  `horaire` varchar(255) DEFAULT NULL,
+  `ageMinimum` varchar(255) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `pseudo_proprio` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Annonces`
+--
+
+LOCK TABLES `Annonces` WRITE;
+/*!40000 ALTER TABLE `Annonces` DISABLE KEYS */;
+INSERT INTO `Annonces` VALUES (1,'Jardin des plantes','Lieu','Divertissement','Pl Blot','Caen',14000,49.1892238000,-0.3703236000,'','8 h - 18 h 30','',' D\'une superficie de 3,5 ha, ce véritable musée végétal se compose d\'une systématique de la flore indigène régionale, d\'un jardin médicinal et thématique, de rocailles, de collections de plantes horticoles et de serres exotiques. A ces aspects plus scientifiques, il faut ajouter un parc paysager et des aires de jeux pour les enfants. Agréé Jardin Botanique de France et des Pays Francophones\r\n\r\nhttps://www.parcsetjardins.fr/jardins/78-jardin-des-plantes-de-caen','toto'),(2,'Abbaye aux Dames de Caen','Lieu','Religieux','Pl Reine Mathilde','Caen',14000,49.1863541000,-0.3543659000,'Visites libres gratuites. Visites guidées (1h, couvent, abbatiale et crypte) tous les jours à 14h30 et 16h. (Sauf les 1er/01, 1er/05 et 25/12).','Site ouvert toute l’année (Sauf les 1 er /01, 1 er /05 et 25/12) : de 8h30 à 12h30 et de 13h30 à 18h en semaine et de 14h à 18h le weekend.','','     EN SOUVENIR DE MATHILDE\r\n\r\nFondée vers 1060 par Mathilde de Flandres, duchesse de Normandie et épouse de Guillaume le Conquérant, l’Abbaye aux Dames a abrité jusqu’à la Révolution Française des religieuses bénédictines. Après la période révolutionnaire, les bâtiments conventuels deviennent tour à tour une caserne, un\r\ndépôt de mendicité, un Hôtel-Dieu en 1823 puis un hospice en 1908. Ils seront restaurés à partir de 1984 pour accueillir quelques mois plus tard les services de la Région Basse-Normandie. Depuis le 1 er janvier 2016, l’Abbaye aux Dames est le siège de la Région Normandie.\r\nL’église abbatiale dédiée à la Sainte-Trinité et consacrée le 18 juin 1066 constitue un chef d’œuvre de l’art roman normand bien que remaniée au XIXe siècle. En son chœur repose la reine Mathilde sous une dalle de marbre noir de Tournai. Les chapiteaux de l’abside offrent une variété d’animaux fantastiques tirés d’un bestiaire médiéval.\r\nLa visite guidée permet non seulement de découvrir l’ancien couvent et son architecture intérieure du XVIII e siècle, l’église abbatiale, certains lieux fermés comme la crypte du XI e siècle et sa forêt de colonnes, mais également d’aborder la vie des illustres dames de l’abbaye.\r\nÀ voir également : Le cabinet de peintures « Peindre en Normandie », accessible librement de 14h à 18h. Les expositions temporaires proposées par la Région Normandie. Le parc de 5 hectares et son cèdre du Liban qui offre un panorama unique sur la ville de Caen. Des visites nocturnes et théâtralisées sont proposées dans l’année.\r\n\r\nhttps://www.abbayes-normandie.com/abbaye/abbaye-aux-dames-caen/','toto'),(3,'La Piscine','Lieu','Musée','23 Rue de l\'Espérance','Roubaix',59100,50.6925172000,3.1679492000,'Plein : 11€ / Réduit : 9€','13h à 18h','','La Piscine, ou musée d\'art et d\'industrie André-Diligent, est un musée de Roubaix qui présente des collections composites d\'arts appliqués et de beaux-arts constituées à partir du XIXe siècle comprenant des tissus, des pièces d\'arts décoratifs, des sculptures, des peintures et dessins. ','toto'),(4,'Hôtel d\'Escoville','Lieu','Historique','Pl Saint Pierre','Caen',14000,49.1859000000,-0.3591000000,'','','',' L\'hôtel d’Escoville est un hôtel particulier construit sur la place Saint-Pierre, dans le centre-ville ancien de Caen, dans les années 1530 et reconstruit après la Seconde Guerre mondiale. Il a pu être appelé également par le passé hôtel de Valois, hôtel d\'Écoville, hôtel de Matignon ou hôtel du Grand Cheval. (WIKIPEDIA)','toto'),(5,'Campus 1 de Caen','Lieu','Ecole','Esplanade de la Paix','Caen',14000,49.1887612000,-0.3639655000,'','8-16h','18 ans',' Le Campus 1 de Caen est l\'un des campus de l\'Université Caen-Normandie. Il s\'agit du campus historique, construit par Henry Bernard dans le cadre de la Reconstruction de Caen, après la destruction du palais des facultés situé en centre-ville pendant la bataille de Caen.','toto'),(6,'Campus 2 de Caen','Lieu','Ecole','6 Bd Maréchal Juin','Caen',14000,49.2141305000,-0.3662889000,'','8-16h','18 ans',' Le Campus 2 de Caen dit aussi « Campus Côte de Nacre » est l’un des campus de l’agglomération caennaise. Il regroupe les formations de sciences et technologies. On y trouve 5 235 étudiants de l’université en 2018–2019, soit 21 % de l\'effectif des campus caennais. La ligne T2 du tramway de Caen y a son terminus.','toto');
+/*!40000 ALTER TABLE `Annonces` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Attente`
+--
+
+DROP TABLE IF EXISTS `Attente`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Attente` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `titre` varchar(255) DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `categorie` varchar(255) DEFAULT NULL,
+  `rue` varchar(255) DEFAULT NULL,
+  `ville` varchar(255) DEFAULT NULL,
+  `codePostal` int(11) DEFAULT NULL,
+  `latitude` decimal(30,10) DEFAULT NULL,
+  `longitude` decimal(30,10) DEFAULT NULL,
+  `tarification` varchar(255) DEFAULT NULL,
+  `horaire` varchar(255) DEFAULT NULL,
+  `ageMinimum` varchar(255) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `pseudo_proprio` varchar(255) DEFAULT NULL,
+  `id_existant` int(11) DEFAULT NULL,
+  `action` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_existant` (`id_existant`),
+  CONSTRAINT `Attente_ibfk_1` FOREIGN KEY (`id_existant`) REFERENCES `Annonces` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Attente`
+--
+
+LOCK TABLES `Attente` WRITE;
+/*!40000 ALTER TABLE `Attente` DISABLE KEYS */;
+INSERT INTO `Attente` VALUES (1,'Maison hantée de caen','Lieu','horreur','45-35 Rue des Rosiers','Caen',14000,49.1857532000,-0.3718702000,'','','',' rrrrrr','admin',NULL,'creation');
+/*!40000 ALTER TABLE `Attente` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Commentaire`
+--
+
+DROP TABLE IF EXISTS `Commentaire`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Commentaire` (
+  `id` int(11) NOT NULL,
+  `comm` text DEFAULT NULL,
+  `idAnnonce` int(11) DEFAULT NULL,
+  `notation` int(5) DEFAULT NULL,
+  `user` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idAnnonce` (`idAnnonce`),
+  CONSTRAINT `Commentaire_ibfk_1` FOREIGN KEY (`idAnnonce`) REFERENCES `Annonces` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Commentaire`
+--
+
+LOCK TABLES `Commentaire` WRITE;
+/*!40000 ALTER TABLE `Commentaire` DISABLE KEYS */;
+INSERT INTO `Commentaire` VALUES (2,'Très joli jardin !',1,5,'admin'),(3,'Peu de places de parking...',6,5,'toto');
+/*!40000 ALTER TABLE `Commentaire` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Image`
+--
+
+DROP TABLE IF EXISTS `Image`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Image` (
+  `id` int(11) NOT NULL,
+  `img` varchar(999) DEFAULT NULL,
+  `idAnnonce` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idAnnonce` (`idAnnonce`),
+  CONSTRAINT `Image_ibfk_1` FOREIGN KEY (`idAnnonce`) REFERENCES `Annonces` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Image`
+--
+
+LOCK TABLES `Image` WRITE;
+/*!40000 ALTER TABLE `Image` DISABLE KEYS */;
+INSERT INTO `Image` VALUES (2,'images/fiche_1_image_2_creation',1),(3,'images/fiche_1_image_3_creation',1),(4,'images/fiche_1_image_4_creation',1),(5,'images/fiche_2_image_2_creation',2),(6,'images/fiche_2_image_3_creation',2),(7,'images/fiche_3_image_5_creation',3),(8,'images/fiche_4_image_6_creation',4),(9,'images/fiche_5_image_7_creation',5),(10,'images/fiche_6_image_8_creation',6);
+/*!40000 ALTER TABLE `Image` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ImageEnAttente`
+--
+
+DROP TABLE IF EXISTS `ImageEnAttente`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ImageEnAttente` (
+  `id` int(11) NOT NULL,
+  `img` varchar(999) DEFAULT NULL,
+  `idAnnonce` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idAnnonce` (`idAnnonce`),
+  CONSTRAINT `ImageEnAttente_ibfk_1` FOREIGN KEY (`idAnnonce`) REFERENCES `Attente` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ImageEnAttente`
+--
+
+LOCK TABLES `ImageEnAttente` WRITE;
+/*!40000 ALTER TABLE `ImageEnAttente` DISABLE KEYS */;
+INSERT INTO `ImageEnAttente` VALUES (2,'images/fiche_1_image_0_attente',1),(3,'images/fiche_1_image_1_attente',1);
+/*!40000 ALTER TABLE `ImageEnAttente` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2022-03-21 18:05:55

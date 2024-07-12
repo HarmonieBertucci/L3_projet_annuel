@@ -1,0 +1,370 @@
+<?php
+
+require_once("model/Fiche.php");
+require_once("model/Comm.php");
+require_once("model/FicheStorageMySQL.php");
+require_once("model/ImagesStorageMySQL.php");
+require_once("src/model/FicheBuilder.php");
+require_once("model/AccountStorageMySQL.php");
+require_once("model/CommStorageSQL.php");
+require_once("model/AccountStorage.php");
+require_once("model/AuthenticationManager.php");
+require_once("model/WaitStorageMySQL.php");
+require_once("model/ImagesEnAttenteStorageMySQL.php");
+
+//permet la gestion des actions (est appelé par le routeur pour modifier la vue)
+class Controller
+{
+    protected View $view;
+    protected FicheStorage $ficheStorage;
+    protected AccountStorage $accountStorage;
+    protected AuthenticationManager $authentification;
+    protected CommStorageSQL $commStorage;
+    protected WaitStorageMySQL $waitStorage;
+    protected ImagesStorageMySQL $imageStorage;
+    protected ImagesEnAttenteStorageMySQL $imagesEnAttente;
+
+    //possède la vue et le storage des fiches
+    public function __construct($vue, PDO $pdo)
+    {
+        $this->ficheStorage = new FicheStorageMySQL($pdo);
+        $this->imageStorage = new ImagesStorageMySQL($pdo);
+        $this->view = $vue;
+        $this->accountStorage = new AccountStorageMySQL($pdo);
+        $this->authentification = new AuthenticationManager($this->accountStorage);
+        $this->commStorage = new CommStorageSQL($pdo);
+        $this->waitStorage = new WaitStorageMySQL($pdo);
+        $this->imagesEnAttente = new ImagesEnAttenteStorageMySQL($pdo);
+
+    }
+
+
+///////////////////////////////////////////// Fiche
+
+    public function showListePage($data= null, $method = null, $tri = ["ville", "ASC"],$filter = null)
+    {
+        $liste = null;
+        if ($method == 'POST' && $filter!=null) { // on regarde si ce qui est envoyé est en POST ou en GET
+            $liste = $this->ficheStorage->readAllRecherche($data,$tri,$filter); // On fait appelle à la création de la liste avec le tri simple
+        } else {
+            $liste = $this->ficheStorage->readAll();// On fait appelle à la création de la liste en fonction de ce que l'utilisateur à renseigner dans la barre de recherche
+        }
+        if (key_exists("geocodeInput", $_GET)) {
+            $geocodeInput = $_GET['geocodeInput']; // récupération de la valeur du textfield
+            (new LocationCall())->getUserGeocode($geocodeInput,$this->listeFichesToArray($liste));
+        }
+        $this->view->makeListPage($liste, $this->imageStorage);
+    }
+
+    public function geolocationFct(){
+        $liste = $this->ficheStorage->readAll();// On fait appelle à la création de la liste en fonction de ce que l'utilisateur à renseigner dans la barre de recherche
+        (new LocationCall())->getUserCoordinates($this->listeFichesToArray($liste));
+        $this->showListePage();
+    }
+
+    public function showInformation($id)
+    {
+        $fiche = $this->ficheStorage->read($id);
+        if ($fiche != null) {
+            $listeComm = $this->commStorage->read($id);
+            $listeImages = $this->imageStorage->readWithIdFiche($id);
+            $this->view->makeFichePage($fiche, $id, $listeComm, $listeImages);
+
+        } else {
+            $this->view->makeUnknownFichePage();
+        }
+    }
+
+    public function showCreationPage()
+    {
+        $ficheBuilder = new FicheBuilder();
+        $this->view->makeCreationPage($ficheBuilder);
+    }
+
+    public function saveCreation($data, $images)
+    {
+        $ficheBuilder = new FicheBuilder($data);
+
+      if (!$ficheBuilder->isValid() ) {
+            $this->view->displayFicheCreationFailure("contenu des entrées");
+
+        } else {
+            $loc = new LocationCall();
+            $coordonnee = $loc->adressInCoordinates("" . $data["rue"] ." ". $data["ville"] ." ". $data["codePostal"]);
+            $data["latitude"]=$coordonnee[0];
+            $data["longitude"]=$coordonnee[1];
+            $fiche = new Fiche($data);
+            $this->waitStorage->create($fiche);
+            if($images == NULL){
+              $this->view->displayCreationFicheSucces();
+            }
+            else if ($this->imagesAreValid($images, $this->waitStorage->getLastId())) { //si les images ne sont pas valides
+              $this->view->displayCreationFicheSucces();
+            }
+            else{
+              $this->view->displayFicheCreationFailure("image");
+            }
+
+
+        }
+    }
+
+
+    public function imagesAreValid($images, $idFiche)
+    {
+        $nbImages = count($images['name']);
+        $listeTMPnoms = [];
+
+        for ($i = 0; $i < $nbImages; $i++) {
+
+            $lieuTMP = $images['tmp_name'][$i];
+
+            //Make sure we have a file path
+            if ($lieuTMP != "") {
+                //Setup our new file path
+                $nouveauLieu = "images/fiche_" . $idFiche . "_image_" . $i . "_attente";
+
+                //Upload the file into the temp dir
+                if (exif_imagetype($lieuTMP) === false || !move_uploaded_file($lieuTMP, $nouveauLieu)) {
+                    return false;
+                } else {
+                    $listeTMPnoms[$i] = $nouveauLieu;
+                }
+            } else {
+                return false;
+            }
+        }
+        for ($i = 0; $i < $nbImages; $i++) {
+            $this->imagesEnAttente->create($listeTMPnoms[$i], $idFiche);
+
+        }
+        return true;
+
+    }
+    // pas implementé
+    public function deleteFiche($id)
+    {   if($_SESSION['user']['statut'] ==='admin'){
+        $this->ficheStorage->delete($id);
+        $this->view->dispalyFicheDeleteSucces();
+      }
+      else{
+        $this->waitStorage->deleteUser($id);
+      }
+    }
+
+
+
+    public function makeModificationPage($id){
+      $fiche = $this->ficheStorage->read($id);
+      $this->view->makeModificationPage($fiche, new FicheBuilder());
+    }
+
+    public function SaveComm($data, $idAnnonce)
+    {
+        $comm = new Comm($_SESSION['user']['pseudo'], $data["comm"], $idAnnonce, 5);
+        $this->commStorage->create($comm);
+        $this->showInformation($idAnnonce);
+
+    }
+
+
+
+////////////////////////////////////////////////////// Compte;
+    public function createUser($method, $data)
+    {
+        if ($method == 'GET') {
+            $this->view->makeInscriptionPage();
+        } else if ($method == 'POST') {
+            try {
+                $this->accountStorage->createUser($data['name'], $data['surname'], $data['login'], $data['password'], "user");
+            } catch (PDOException $e) {
+                $this->view->displayCreationFail();
+            }
+            $this->view->displayCreationSuccess();
+        }
+    }
+
+    public function saveInscription($nom, $prenom, $login, $password)
+    {
+        $compte = $this->authentification->createUser($nom, $prenom, $login, $password, "user");
+
+        //si la création a réussi / si les informations etaient correctes
+        if ($compte !== null) {
+            //on réinitialise currentNewAccount
+            $_SESSION['currentNewAccount'] = array("nom" => "", "prenom" => "", "login" => "", "existanceLogin" => "", "password" => "");
+            //on connecte d'utilisateur
+            $this->authentification->connectUser($compte->getLogin(), $compte->getPassword());
+            //on le redirrige vers index.php avec le feedback
+            $this->view->displayInscriptionSucces();
+        } else {
+            //on met dans currentNewAccount les erreurs d'authentification
+            $_SESSION['currentNewAccount'] = $this->authentification->getError();
+            //on le redirrige vers la page de création de compte avec le feedback
+            $this->view->displayAccountCreationFailure();
+            //$this->view->showAccueilPage();
+        }
+
+
+    }
+
+
+    public function showConnexionPage()
+    {
+        $this->view->makeConnexionPage();
+    }
+
+    public function connexion($data)
+    {
+        if ($this->accountStorage->checkAuth($data['login'], $data['password'])) {
+            $this->view->displayConnexionSuccess();
+        } else {
+            $this->view->displayConnexionFailure();
+
+        }
+    }
+
+
+    public function showDeconnexionPage()
+    {
+        $this->view->makeDeconnexionPage();
+    }
+
+    public function deconnexion()
+    {
+        $_SESSION["user"] = null;
+
+        $this->view->displayDeconnexionSucces();
+    }
+
+
+    public function inscription()
+    {
+        $this->view->makeInscriptionPage();
+    }
+
+    private function listeFichesToArray($listeFiches)
+    {
+        $array = array();
+
+        foreach ($listeFiches as $key => $value) {
+            $fiche = $value;
+            $ficheArray = array($fiche->getLatitude(), $fiche->getLongitude(), $fiche->getType(), $fiche->getTitre(),$fiche->getId());
+            array_push($array, $ficheArray);
+
+        }
+        return $array;
+
+    }
+
+////////////////////////////////// partie admin
+    public function showWaitList()
+    {
+        $waitList = $this->waitStorage->readAll();
+        $this->view->makeWaitListPage($waitList, $this->imagesEnAttente);
+    }
+
+    public function showInformationWait($id)
+    {
+        $lecture =$this->waitStorage->read($id);
+        $fiche = new Fiche($lecture);
+        if ($fiche != null) {
+            $listeImages = $this->imagesEnAttente->readWithIdFiche($id);
+            $this->view->makeWaitPage($fiche, $id, $listeImages,$lecture["action"]);
+
+        } else {
+            $this->view->makeUnknownFichePage();
+        }
+    }
+
+    public function modifierFicheWait( $id)
+    {
+
+      $lecture = $this->waitStorage->read($id);
+
+      if (!$lecture) {
+        $this->view->erreur404("L'annonce spécifié n'est pas enregistré sur ce site");
+      }
+        $fiche= new Fiche($lecture);
+
+
+      $this->view->makeModificationPage($fiche);
+    }
+
+    public function saveModify($id,$data){
+
+
+      $ficheBuilder = new FicheBuilder($data);
+
+      if (!$ficheBuilder->isValid()){
+
+
+          $this->view->displayFicheModifyFailure($ficheBuilder->getErrors());
+
+      } else {
+
+          $fiche = new Fiche($data);
+          if($_SESSION['user']['statut'] === "admin"){
+            if(!$this->waitStorage->read($id) ){
+              $this->waitStorage->updateUser($id,$fiche);
+            }
+            else{
+              $this->waitStorage->updateAdmin($id,$fiche);
+            }
+          }
+        else {
+
+          $this->waitStorage->updateUser($id,$fiche);
+          }
+          $this->view->displayModifySucessFicheSucces();
+      }
+    }
+
+    public function ValidWait($id){
+
+            $wait = $this->waitStorage->read($id);
+            switch ($wait["action"]){
+              case 'creation' :
+                $ficheBuilder = new FicheBuilder($wait);
+                if (!$ficheBuilder->isValid()) {
+                    $this->view->displayFicheCreationFailure("infos de la fiche incorrect");
+                } else {
+                    $fiche = new Fiche($wait);
+                    $newId=$this->ficheStorage->create($fiche);
+                    foreach ($this->imagesEnAttente->readWithIdFiche($id) as $img) {
+                        $nouveauLieu = "images/fiche_" . $newId . "_image_" . $img["id"] . "_creation";
+                        rename($img["img"], $nouveauLieu);
+                        $this->imageStorage->create($nouveauLieu,$newId);
+                        $this->imagesEnAttente->delete($img["id"],$id);
+                    }
+                    $this->waitStorage->delete($id);
+                    $this->view->displayValidationFicheSucces();
+                }
+              break;
+
+              case 'modification':
+                if($wait["id_existant"] !==null){
+
+                  $fiche = new Fiche($wait);
+                  $this->ficheStorage->update($wait["id_existant"],$fiche);
+                  $this->waitStorage->delete($id);
+                  $this->view->displayValidationFicheSucces();
+                }
+            }
+    }
+    public function deleteWait($id){
+      foreach ($this->imagesEnAttente->readWithIdFiche($id) as $img) {
+          $this->imagesEnAttente->delete($img["id"],$id);
+      }
+      $this->waitStorage->delete($id);
+      $this->view->displayRefusSucces();
+    }
+
+    public function deleteImage($idImage,$idFiche){
+      $this->imagesEnAttente->delete($idImage,$idFiche);
+      $this->showInformationWait($idFiche);
+
+    }
+
+}
+
+?>
